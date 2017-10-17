@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +41,7 @@ public class DrugController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/v1/d3/drugs/name/{drugname}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> get(@PathVariable(value = "drugname") String drugname) throws JsonProcessingException {
+		drugname =  StringUtils.capitalize(drugname);
 		List<Drug> drugList = drugRepository.findBydrugname(drugname);
 		String json = jacksonObjectMapper.writeValueAsString(drugList);
 		logger.info(json);

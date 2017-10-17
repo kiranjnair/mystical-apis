@@ -1,0 +1,1 @@
+mongoimport -h ds121535.mlab.com:21535 -d heroku_dx69v0m5 -c drugs -u mystic1 -p alexa01 --file home/knair/git/mystical-apis/src/main/resources/data/drugs.csv --type csv --headerline
