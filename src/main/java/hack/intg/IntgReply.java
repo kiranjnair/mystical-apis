@@ -1,4 +1,4 @@
-package hack.intg.interaction;
+package hack.intg;
 
 public interface IntgReply {
 
