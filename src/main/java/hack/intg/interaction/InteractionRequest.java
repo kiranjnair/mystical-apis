@@ -3,6 +3,8 @@ package hack.intg.interaction;
 import java.util.HashMap;
 import java.util.Map;
 
+import hack.intg.IntgRequest;
+
 public class InteractionRequest implements IntgRequest {
 	private String 	rxcuis;
 	private String url = "https://rxnav.nlm.nih.gov/REST/interaction/list.json";

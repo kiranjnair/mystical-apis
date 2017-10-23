@@ -1,5 +1,7 @@
 package hack.intg.interaction;
 
+import hack.intg.IntgReply;
+
 public class InteractionReply implements IntgReply {
 	private String 	rawJson;
 

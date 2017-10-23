@@ -29,12 +29,12 @@ import io.swagger.annotations.Api;
 
 @Api(value = "Drug  REST API", description = "Drug REST API project")
 @RestController
-public class InteractionController {
+public class ConversationController {
 	
 	@Autowired
 	InteractionService iService;
 
-	private static Logger logger = LoggerFactory.getLogger(InteractionController.class);
+	private static Logger logger = LoggerFactory.getLogger(ConversationController.class);
 	private static final ObjectMapper jacksonObjectMapper = new ObjectMapper();
 
 	{
@@ -64,7 +64,7 @@ public class InteractionController {
 			InteractionReply reply = (InteractionReply)iService.invoke(irequest);
 			json = reply.getRawJson();
 		} catch (Exception e) {
-			return new ResponseEntity<String>(e.toString(), HttpStatus.OK);
+			return new ResponseEntity<String>(e.toString(), HttpStatus.PARTIAL_CONTENT);
 		}
 	
 		logger.info(json);
