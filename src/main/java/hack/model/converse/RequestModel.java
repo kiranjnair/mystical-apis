@@ -1,14 +1,17 @@
 package hack.model.converse;
 
 public class RequestModel {
-	private String query;
+	//private String v;
+	private String q;
 	private String lang;
 	private String sessionId;
-	public String getQuery() {
-		return query;
+	private String timezone;
+	private String resetContexts;
+	public String getQ() {
+		return q;
 	}
-	public void setQuery(String query) {
-		this.query = query;
+	public void setQ(String q) {
+		this.q = q;
 	}
 	public String getLang() {
 		return lang;
@@ -22,10 +25,22 @@ public class RequestModel {
 	public void setSessionId(String sessionId) {
 		this.sessionId = sessionId;
 	}
+	public String getTimezone() {
+		return timezone;
+	}
+	public void setTimezone(String timezone) {
+		this.timezone = timezone;
+	}
+	public String getResetContexts() {
+		return resetContexts;
+	}
+	public void setResetContexts(String resetContexts) {
+		this.resetContexts = resetContexts;
+	}
 	@Override
 	public String toString() {
-		return "RequestModel [query=" + query + ", lang=" + lang + ", sessionId=" + sessionId + "]";
+		return "RequestModel [q=" + q + ", lang=" + lang + ", sessionId=" + sessionId + ", timezone=" + timezone
+				+ ", resetContexts=" + resetContexts + "]";
 	}
-	
-	
+
 }

@@ -11,7 +11,8 @@ import hack.model.converse.RequestModel;
 
 public class ConversationRequest implements IntgRequest {
 	private RequestModel 	rModel;
-	private String url = "https://api.api.ai/v1/";
+	//private String url = "https://api.api.ai/v1/query?";
+	private String url = "https://console.dialogflow.com/api/query?v=20170712";
 	Map<String,String> params;
 
 	
@@ -35,7 +36,11 @@ public class ConversationRequest implements IntgRequest {
 	public String getBody() {
 		Map <String, Object> body = new HashMap<String, Object>();
 		ObjectMapper mapper = new ObjectMapper();
-		body.put("responseModel", getrModel());
+		
+		body.put("q", getrModel().getQ());
+		body.put("lang", getrModel().getLang());
+		body.put("sessionId", getrModel().getSessionId());
+		body.put("timezone", getrModel().getTimezone());
 		String json=null;
 		try {
 			json = mapper.writeValueAsString(body);

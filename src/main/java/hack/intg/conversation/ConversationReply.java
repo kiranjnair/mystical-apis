@@ -14,6 +14,12 @@ public class ConversationReply implements IntgReply {
 		this.rModel = rModel;
 	}
 
+	@Override
+	public String toString() {
+		return "ConversationReply [rModel=" + rModel + "]";
+	}
+	
+
 
 	
 

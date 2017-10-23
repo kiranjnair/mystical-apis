@@ -6,7 +6,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -23,6 +22,7 @@ public class ConversationService implements IntgService{
 		ConversationRequest crequest = (ConversationRequest)request;
 		RestTemplate restTemplate = new RestTemplate();
 		logger.info("URL "+crequest.getUrl());
+		logger.info("Body "+crequest.getBody());
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Authorization", "Bearer 16096ae63c7a426abd25f1e4c23eb44f");
 		headers.setContentType(MediaType.APPLICATION_JSON);
@@ -31,7 +31,7 @@ public class ConversationService implements IntgService{
 		factory.setConnectTimeout(10000);
 		restTemplate.setRequestFactory(factory);		
 
-		HttpEntity<?> httpEntity = new HttpEntity<Object>(crequest,headers);
+		HttpEntity<?> httpEntity = new HttpEntity<Object>(crequest.getBody(),headers);
 
 		ResponseModel resModel = restTemplate.postForObject(crequest.getUrl(), httpEntity, ResponseModel.class);
 		ConversationReply reply = new ConversationReply();
