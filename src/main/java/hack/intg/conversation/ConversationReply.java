@@ -4,23 +4,21 @@ import hack.intg.IntgReply;
 import hack.model.converse.ResponseModel;
 
 public class ConversationReply implements IntgReply {
-	private ResponseModel rModel;
+	private ResponseModel responseModel;
 
-	public ResponseModel getrModel() {
-		return rModel;
+	public ResponseModel getResponseModel() {
+		return responseModel;
 	}
 
-	public void setrModel(ResponseModel rModel) {
-		this.rModel = rModel;
+	public void setResponseModel(ResponseModel responseModel) {
+		this.responseModel = responseModel;
 	}
 
 	@Override
 	public String toString() {
-		return "ConversationReply [rModel=" + rModel + "]";
+		return "ConversationReply [responseModel=" + responseModel + "]";
 	}
-	
 
 
-	
 
 }

@@ -15,9 +15,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import hack.dal.ScheduleRepository;
 import hack.intg.conversation.ConversationReply;
 import hack.intg.conversation.ConversationRequest;
 import hack.intg.conversation.ConversationService;
+import hack.model.Schedule;
+import hack.model.converse.Parameters;
 import hack.model.converse.RequestModel;
 import hack.model.converse.ResponseModel;
 import io.swagger.annotations.Api;
@@ -28,6 +31,9 @@ public class ConversationController {
 	
 	@Autowired
 	ConversationService cService;
+	
+	@Autowired
+	private ScheduleRepository scheduleRepository;
 
 	private static Logger logger = LoggerFactory.getLogger(ConversationController.class);
 	private static final ObjectMapper jacksonObjectMapper = new ObjectMapper();
@@ -50,7 +56,31 @@ public class ConversationController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return reply.getrModel();
+		ResponseModel resModel = reply.getResponseModel();
+		if(resModel!=null){
+			if (resModel.getResult()!=null && resModel.getResult().getParameters()!=null){
+				saveDrugSchedule(resModel);
+			}
+		}
+		return resModel;
+		
+	}
+
+
+
+	private void saveDrugSchedule(ResponseModel resModel) {
+		Parameters parameters = resModel.getResult().getParameters();
+		Schedule schedule =  new Schedule();
+		schedule.setUseruid("bob");
+		schedule.setDrugname(parameters.getMedicine());
+		schedule.setRxnormId("NA");
+		schedule.setFreqency(parameters.getRecurrence());
+		schedule.setTime(parameters.getTime());
+		schedule.setDate(parameters.getDate());
+		
+		schedule = scheduleRepository.save(schedule);
+		
+		
 	}
 	
 

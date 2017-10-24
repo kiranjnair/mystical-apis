@@ -33,9 +33,9 @@ public class ConversationService implements IntgService{
 
 		HttpEntity<?> httpEntity = new HttpEntity<Object>(crequest.getBody(),headers);
 
-		ResponseModel resModel = restTemplate.postForObject(crequest.getUrl(), httpEntity, ResponseModel.class);
+		ResponseModel responseModel = restTemplate.postForObject(crequest.getUrl(), httpEntity, ResponseModel.class);
 		ConversationReply reply = new ConversationReply();
-		reply.setrModel(resModel);
+		reply.setResponseModel(responseModel);
 		return reply;
 	
 	}

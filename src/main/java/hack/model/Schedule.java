@@ -14,6 +14,7 @@ public class Schedule {
 	private String time;
 	private String ampm;
 	private String freqency;
+	private String date;
 	public String getId() {
 		return id;
 	}
@@ -58,6 +59,13 @@ public class Schedule {
 	}
 	public void setFreqency(String freqency) {
 		this.freqency = freqency;
+	}
+	
+	public String getDate() {
+		return date;
+	}
+	public void setDate(String date) {
+		this.date = date;
 	}
 	@Override
 	public String toString() {
