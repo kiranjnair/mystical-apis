@@ -1,15 +1,16 @@
 package hack.model.converse;
 
+import java.util.Arrays;
+
 public class Result {
 	public String source;
 	public String resolvedQuery;
-	public String speech;
 	public String action;
 	public boolean actionIncomplete;	
 	public Parameters parameters;
-	public Metadata metadata;
 	public Context[] contexts;
-	public Fullfillment fullfillment;
+	public Metadata metadata;	
+	public Fullfillment fulfillment;
 	public String score;
 	
 	public String getSource() {
@@ -24,12 +25,7 @@ public class Result {
 	public void setResolvedQuery(String resolvedQuery) {
 		this.resolvedQuery = resolvedQuery;
 	}
-	public String getSpeech() {
-		return speech;
-	}
-	public void setSpeech(String speech) {
-		this.speech = speech;
-	}
+	
 	public String getAction() {
 		return action;
 	}
@@ -60,13 +56,14 @@ public class Result {
 	public void setActionIncomplete(boolean actionIncomplete) {
 		this.actionIncomplete = actionIncomplete;
 	}
-	public Fullfillment getFullfillment() {
-		return fullfillment;
-	}
-	public void setFullfillment(Fullfillment fullfillment) {
-		this.fullfillment = fullfillment;
-	}
+
 	
+	public Fullfillment getFulfillment() {
+		return fulfillment;
+	}
+	public void setFulfillment(Fullfillment fulfillment) {
+		this.fulfillment = fulfillment;
+	}
 	public Context[] getContexts() {
 		return contexts;
 	}
@@ -75,11 +72,11 @@ public class Result {
 	}
 	@Override
 	public String toString() {
-		return "Result [source=" + source + ", resolvedQuery=" + resolvedQuery + ", speech=" + speech + ", action="
-				+ action + ", actionIncomplete=" + actionIncomplete + ", parameters=" + parameters + ", metadata="
-				+ metadata + ", fullfillment=" + fullfillment + ", score=" + score + "]";
+		return "Result [source=" + source + ", resolvedQuery=" + resolvedQuery + ",  action="
+				+ action + ", actionIncomplete=" + actionIncomplete + ", parameters=" + parameters + ", contexts="
+				+ Arrays.toString(contexts) + ", metadata=" + metadata + ", fulfillment=" + fulfillment + ", score="
+				+ score + "]";
 	}
-
 	
 
 }

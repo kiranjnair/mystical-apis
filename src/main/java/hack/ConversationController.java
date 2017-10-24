@@ -59,7 +59,7 @@ public class ConversationController {
 		ResponseModel resModel = reply.getResponseModel();
 		if(resModel!=null){
 			if (resModel.getResult()!=null && resModel.getResult().getParameters()!=null){
-				saveDrugSchedule(resModel);
+				//saveDrugSchedule(resModel);
 			}
 		}
 		return resModel;
