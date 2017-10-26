@@ -10,6 +10,7 @@ public class ContextParameters {
 	private String medicine;
 	private String time;
 	private String recurrence_original;
+	private String my_action;
 
 	public String getRecurrence() {
 		return recurrence;
@@ -59,12 +60,21 @@ public class ContextParameters {
 	public void setRecurrence_original(String recurrence_original) {
 		this.recurrence_original = recurrence_original;
 	}
+	
+	public String getMy_action() {
+		return my_action;
+	}
+	public void setMy_action(String my_action) {
+		this.my_action = my_action;
+	}
 	@Override
 	public String toString() {
-		return "ContextParameters [recurrence=" + recurrence + ", date=" + date + ", time_original="
-				+ time_original + ", date_original=" + date_original + ", medicine_original=" + medicine_original
-				+ ", medicine=" + medicine + ", time=" + time + ", recurrence_original=" + recurrence_original + "]";
+		return "ContextParameters [recurrence=" + recurrence + ", date=" + date + ", time_original=" + time_original
+				+ ", date_original=" + date_original + ", medicine_original=" + medicine_original + ", medicine="
+				+ medicine + ", time=" + time + ", recurrence_original=" + recurrence_original + ", my_action="
+				+ my_action + "]";
 	}
+
 	
 	
 }

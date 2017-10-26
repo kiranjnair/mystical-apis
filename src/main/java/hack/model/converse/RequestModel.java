@@ -7,6 +7,7 @@ public class RequestModel {
 	private String sessionId;
 	private String timezone;
 	private String resetContexts;
+	private Parameters appParams;
 	public String getQ() {
 		return q;
 	}
@@ -37,6 +38,7 @@ public class RequestModel {
 	public void setResetContexts(String resetContexts) {
 		this.resetContexts = resetContexts;
 	}
+	
 	@Override
 	public String toString() {
 		return "RequestModel [q=" + q + ", lang=" + lang + ", sessionId=" + sessionId + ", timezone=" + timezone

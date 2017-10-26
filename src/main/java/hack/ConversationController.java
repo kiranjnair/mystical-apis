@@ -15,25 +15,26 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import hack.dal.ScheduleRepository;
+import hack.dal.ContextParamsRepository;
 import hack.intg.conversation.ConversationReply;
 import hack.intg.conversation.ConversationRequest;
 import hack.intg.conversation.ConversationService;
-import hack.model.Schedule;
-import hack.model.converse.Parameters;
+import hack.model.converse.Context;
+import hack.model.converse.ContextParameters;
 import hack.model.converse.RequestModel;
 import hack.model.converse.ResponseModel;
+import hack.model.converse.Result;
 import io.swagger.annotations.Api;
 
-@Api(value = "Drug  REST API", description = "Drug REST API project")
+@Api(value = "Dialog flow Controller API", description = "Dialog API project")
 @RestController
 public class ConversationController {
-	
+
 	@Autowired
 	ConversationService cService;
-	
+
 	@Autowired
-	private ScheduleRepository scheduleRepository;
+	private ContextParamsRepository contextParamsRepository;
 
 	private static Logger logger = LoggerFactory.getLogger(ConversationController.class);
 	private static final ObjectMapper jacksonObjectMapper = new ObjectMapper();
@@ -43,45 +44,44 @@ public class ConversationController {
 		jacksonObjectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
 
-
-	
 	@RequestMapping(method = RequestMethod.POST, value = "/v1/d3/sendtoapi", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ResponseModel converse(@RequestBody RequestModel rModel) throws JsonProcessingException {
 		ConversationRequest request = new ConversationRequest();
 		request.setrModel(rModel);
 		ConversationReply reply = null;
 		try {
-			reply = (ConversationReply)cService.invoke(request);
-			logger.debug(" Conversation Response {}",reply.toString());
+			reply = (ConversationReply) cService.invoke(request);
+			logger.debug(" Conversation Response {}", reply.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		ResponseModel resModel = reply.getResponseModel();
-		if(resModel!=null){
-			if (resModel.getResult()!=null && resModel.getResult().getParameters()!=null){
-				//saveDrugSchedule(resModel);
+		if (resModel != null) {
+			if (resModel.getResult() != null && resModel.getResult().getParameters() != null) {
+				saveMedicineParams(resModel);
 			}
 		}
 		return resModel;
-		
+
 	}
+	/*
+	 * action": "previouscontext fulfillment": { "speech": "Schedule a medicine"
+	 */
 
+	private void saveMedicineParams(ResponseModel resModel) {
+		Result result = resModel.getResult();
 
+		if (result.getAction().equalsIgnoreCase("reminder.confirm")) {
+			Context[] contexts = result.getContexts();
+			ContextParameters cParameters = contexts[0].getParameters();
+			if (cParameters.getMy_action() != null && cParameters.getMy_action().equalsIgnoreCase("reminder.set")) {
+				cParameters = contextParamsRepository.save(cParameters);
+				logger.debug("Saved Context params {} ", cParameters);
 
-	private void saveDrugSchedule(ResponseModel resModel) {
-		Parameters parameters = resModel.getResult().getParameters();
-		Schedule schedule =  new Schedule();
-		schedule.setUseruid("bob");
-		schedule.setDrugname(parameters.getMedicine());
-		schedule.setRxnormId("NA");
-		schedule.setFreqency(parameters.getRecurrence());
-		schedule.setTime(parameters.getTime());
-		schedule.setDate(parameters.getDate());
-		
-		schedule = scheduleRepository.save(schedule);
-		
-		
+			}
+
+		}
+
 	}
-	
 
 }
