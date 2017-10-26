@@ -1,7 +1,6 @@
 package hack.intg.interaction;
 
 import java.net.URI;
-import java.net.URLEncoder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +28,6 @@ public class InteractionService implements IntgService{
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		ResponseEntity<String> response
 		  = restTemplate.getForEntity(uri, String.class);
-		logger.info("Content header1 {} "+response.getHeaders().toString());
 		logger.info("Response {} "+response.getBody());
 		InteractionReply reply = new InteractionReply();
 		reply.setRawJson(response.getBody());
