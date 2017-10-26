@@ -1,5 +1,8 @@
 package hack.intg.interaction;
 
+import java.net.URI;
+import java.net.URLEncoder;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -20,10 +23,13 @@ public class InteractionService implements IntgService{
 		InteractionRequest irequest = (InteractionRequest)request;
 		RestTemplate restTemplate = new RestTemplate();
 		logger.info("URL "+irequest.getUrl());
+		String url = irequest.getUrl();
+		URI uri = URI.create(url);
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		ResponseEntity<String> response
-		  = restTemplate.getForEntity(irequest.getUrl(), String.class);
+		  = restTemplate.getForEntity(uri, String.class);
+		logger.info("Content header1 {} "+response.getHeaders().toString());
 		logger.info("Response {} "+response.getBody());
 		InteractionReply reply = new InteractionReply();
 		reply.setRawJson(response.getBody());
