@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import hack.exception.AppException;
 import hack.intg.IntgReply;
 import hack.intg.IntgRequest;
 import hack.intg.IntgService;
@@ -17,7 +18,7 @@ import hack.intg.IntgService;
 public class InteractionService implements IntgService{
 	private static Logger logger = LoggerFactory.getLogger(InteractionService.class);
 
-	public IntgReply invoke(IntgRequest request) throws Exception {
+	public IntgReply invoke(IntgRequest request) throws AppException {
 		
 		InteractionRequest irequest = (InteractionRequest)request;
 		RestTemplate restTemplate = new RestTemplate();

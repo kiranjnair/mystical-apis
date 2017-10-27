@@ -9,6 +9,7 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import hack.exception.AppException;
 import hack.intg.IntgReply;
 import hack.intg.IntgRequest;
 import hack.intg.IntgService;
@@ -17,7 +18,7 @@ import hack.model.converse.ResponseModel;
 public class ConversationService implements IntgService{
 	private static Logger logger = LoggerFactory.getLogger(ConversationService.class);
 
-	public IntgReply invoke(IntgRequest request) throws Exception {
+	public IntgReply invoke(IntgRequest request)  throws AppException {
 		
 		ConversationRequest crequest = (ConversationRequest)request;
 		RestTemplate restTemplate = new RestTemplate();

@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import hack.dal.ScheduleRepository;
+import hack.exception.AppException;
 import hack.intg.interaction.InteractionReply;
 import hack.intg.interaction.InteractionRequest;
 import hack.intg.interaction.InteractionService;
@@ -47,16 +48,14 @@ public class InteractionController {
 
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/v1/d3/interactions/{useruid}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> getDrugIds(@PathVariable(value = "useruid") String useruid) throws JsonProcessingException {
+	public ResponseEntity<String> getDrugIds(@PathVariable(value = "useruid") String useruid) throws AppException,JsonProcessingException {
 		List<Schedule> scheduleList = scheduleRepository.findByuseruid(useruid);
 		List<String> drugIds = new ArrayList<String>();
 		for(Schedule schedule:scheduleList) {
 			drugIds.add(schedule.getRxnormId());
 			
-			
 		}
 		String drugIdString = StringUtils.collectionToDelimitedString(drugIds, "+");
-		logger.info("checking intertin "+drugIdString);
 		InteractionRequest irequest = new InteractionRequest();
 		irequest.setRxcuis(drugIdString);
 		String json ;

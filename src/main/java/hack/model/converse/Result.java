@@ -3,15 +3,19 @@ package hack.model.converse;
 import java.util.Arrays;
 
 public class Result {
-	public String source;
-	public String resolvedQuery;
-	public String action;
-	public boolean actionIncomplete;	
-	public Parameters parameters;
-	public Context[] contexts;
-	public Metadata metadata;	
-	public Fullfillment fulfillment;
-	public String score;
+	private String source;
+	private String resolvedQuery;
+	private String action;
+	private boolean actionIncomplete;	
+	private Parameters parameters;
+	private Context[] contexts;
+	private Metadata metadata;	
+	private Fullfillment fulfillment;
+	private String score;
+	private boolean _interactionAvailable;
+	private boolean _healthTipsAvailable;
+	private String _interactionQuestion; 
+	private String _healthTipQuestion;
 	
 	public String getSource() {
 		return source;
@@ -56,8 +60,6 @@ public class Result {
 	public void setActionIncomplete(boolean actionIncomplete) {
 		this.actionIncomplete = actionIncomplete;
 	}
-
-	
 	public Fullfillment getFulfillment() {
 		return fulfillment;
 	}
@@ -70,13 +72,39 @@ public class Result {
 	public void setContexts(Context[] contexts) {
 		this.contexts = contexts;
 	}
+	public boolean is_interactionAvailable() {
+		return _interactionAvailable;
+	}
+	public void set_interactionAvailable(boolean _interactionAvailable) {
+		this._interactionAvailable = _interactionAvailable;
+	}
+	public boolean is_healthTipsAvailable() {
+		return _healthTipsAvailable;
+	}
+	public void set_healthTipsAvailable(boolean _healthTipsAvailable) {
+		this._healthTipsAvailable = _healthTipsAvailable;
+	}
+	public String get_interactionQuestion() {
+		return _interactionQuestion;
+	}
+	public void set_interactionQuestion(String _interactionQuestion) {
+		this._interactionQuestion = _interactionQuestion;
+	}
+	public String get_healthTipQuestion() {
+		return _healthTipQuestion;
+	}
+	public void set_healthTipQuestion(String _healthTipQuestion) {
+		this._healthTipQuestion = _healthTipQuestion;
+	}
 	@Override
 	public String toString() {
-		return "Result [source=" + source + ", resolvedQuery=" + resolvedQuery + ",  action="
-				+ action + ", actionIncomplete=" + actionIncomplete + ", parameters=" + parameters + ", contexts="
+		return "Result [source=" + source + ", resolvedQuery=" + resolvedQuery + ", action=" + action
+				+ ", actionIncomplete=" + actionIncomplete + ", parameters=" + parameters + ", contexts="
 				+ Arrays.toString(contexts) + ", metadata=" + metadata + ", fulfillment=" + fulfillment + ", score="
-				+ score + "]";
+				+ score + ", _interactionAvailable=" + _interactionAvailable + ", _healthTipsAvailable="
+				+ _healthTipsAvailable + ", _interactionQuestion=" + _interactionQuestion + ", _healthTipQuestion="
+				+ _healthTipQuestion + "]";
 	}
-	
+
 
 }

@@ -1,8 +1,9 @@
 package hack;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,10 +21,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import hack.dal.PersonRepository;
 import hack.model.Person;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import io.swagger.annotations.Api;
 
 @Api(value = "Demo REST API", description = "Sample/demo REST API project to show various use cases.")
