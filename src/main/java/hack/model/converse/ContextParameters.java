@@ -1,7 +1,5 @@
 package hack.model.converse;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class ContextParameters {
 
 	private String recurrence;
@@ -11,8 +9,7 @@ public class ContextParameters {
 	private String medicine_original;
 	private String medicine;
 	private String time;
-	private String recurrence_original;
-	@JsonProperty("my-action")
+	private String recurrence_original;	
 	private String myaction;
 
 	public String getRecurrence() {

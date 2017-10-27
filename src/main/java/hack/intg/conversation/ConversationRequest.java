@@ -37,10 +37,12 @@ public class ConversationRequest implements IntgRequest {
 		Map <String, Object> body = new HashMap<String, Object>();
 		ObjectMapper mapper = new ObjectMapper();
 		
-		body.put("q", getrModel().getQ());
+		body.put("query", getrModel().getQuery());
 		body.put("lang", getrModel().getLang());
 		body.put("sessionId", getrModel().getSessionId());
 		body.put("timezone", getrModel().getTimezone());
+		body.put("resetContexts", getrModel().getResetContexts());
+		body.put("userid", getrModel().getUserid());
 		String json=null;
 		try {
 			json = mapper.writeValueAsString(body);

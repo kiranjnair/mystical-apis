@@ -23,6 +23,7 @@ import hack.intg.conversation.ConversationRequest;
 import hack.intg.conversation.ConversationService;
 import hack.model.converse.Context;
 import hack.model.converse.ContextParameters;
+import hack.model.converse.Fullfillment;
 import hack.model.converse.RequestModel;
 import hack.model.converse.ResponseModel;
 import hack.model.converse.Result;
@@ -52,19 +53,63 @@ public class ConversationController {
 		request.setrModel(reqModel);
 		ConversationReply reply = null;
 		try {
+			logger.debug(" Conversation Request Received: {}", reqModel);
 			reply = (ConversationReply) cService.invoke(request);
-			logger.debug(" Conversation Response {}", reply.toString());
+			logger.debug(" Conversation Response from DialogFlow {}", reply.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		ResponseModel resModel = reply.getResponseModel();
+		//resModel = createDummyYesResModel();
+		//resModel = createDummyNoResModel();
 		if (resModel != null) {
-			if (resModel.getResult() != null && resModel.getResult().getParameters() != null) {
+			if (resModel.getResult() != null) {
 				resModel = apiRouting(reqModel,resModel);
 			}
 		}
 		return resModel;
 
+	}
+
+	private ResponseModel createDummyYesResModel() {
+		ResponseModel model = new ResponseModel();
+		Result result = new Result();
+		result.setAction("previouscontext");
+		Context context = new Context();
+		ContextParameters cParams = new ContextParameters();
+		cParams.setMyaction("reminder.set");
+		context.setParameters(cParams);
+		Context[] contexts = new Context[1];
+		contexts[0]=context;
+		result.setContexts(contexts);
+		Fullfillment fulfillment = new Fullfillment();
+		fulfillment.setSpeech("Schedule a Meddicne");
+		result.setFulfillment(fulfillment);
+		model.setResult(result);
+		logger.debug("Dummy Model Yes {}",model);
+		
+		
+		return model;
+	}
+	private ResponseModel createDummyNoResModel() {
+		ResponseModel model = new ResponseModel();
+		Result result = new Result();
+		result.setAction("reminder.cancel");
+		Context context = new Context();
+		ContextParameters cParams = new ContextParameters();
+		cParams.setMyaction("reminder.set");
+		context.setParameters(cParams);
+		Context[] contexts = new Context[1];
+		contexts[0]=context;
+		result.setContexts(contexts);
+		Fullfillment fulfillment = new Fullfillment();
+		fulfillment.setSpeech("Schedule a Meddicne");
+		result.setFulfillment(fulfillment);
+		model.setResult(result);
+		logger.debug("Dummy Model Yes {}",model);
+		
+		
+		return model;
 	}
 
 	private ResponseModel apiRouting(RequestModel reqModel,ResponseModel resModel) throws AppException, JsonProcessingException {
@@ -87,7 +132,7 @@ public class ConversationController {
 				if(altQuery!=null){
 					RequestModel newRequestModel= new RequestModel();
 					BeanUtils.copyProperties(reqModel, newRequestModel);
-					newRequestModel.setQ(altQuery);
+					newRequestModel.setQuery(altQuery);
 					logger.info("Set new query to request",newRequestModel);
 					resModel = converse(newRequestModel);
 				}
