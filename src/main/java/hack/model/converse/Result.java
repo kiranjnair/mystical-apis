@@ -1,6 +1,6 @@
 package hack.model.converse;
 
-import java.util.Arrays;
+import java.util.List;
 
 public class Result {
 	private String source;
@@ -8,7 +8,7 @@ public class Result {
 	private String action;
 	private boolean actionIncomplete;	
 	private Parameters parameters;
-	private Context[] contexts;
+	private List<Context> contexts;
 	private Metadata metadata;	
 	private Fullfillment fulfillment;
 	private String score;
@@ -66,10 +66,11 @@ public class Result {
 	public void setFulfillment(Fullfillment fulfillment) {
 		this.fulfillment = fulfillment;
 	}
-	public Context[] getContexts() {
+
+	public List<Context> getContexts() {
 		return contexts;
 	}
-	public void setContexts(Context[] contexts) {
+	public void setContexts(List<Context> contexts) {
 		this.contexts = contexts;
 	}
 	public boolean is_interactionAvailable() {
@@ -99,12 +100,12 @@ public class Result {
 	@Override
 	public String toString() {
 		return "Result [source=" + source + ", resolvedQuery=" + resolvedQuery + ", action=" + action
-				+ ", actionIncomplete=" + actionIncomplete + ", parameters=" + parameters + ", contexts="
-				+ Arrays.toString(contexts) + ", metadata=" + metadata + ", fulfillment=" + fulfillment + ", score="
-				+ score + ", _interactionAvailable=" + _interactionAvailable + ", _healthTipsAvailable="
-				+ _healthTipsAvailable + ", _interactionQuestion=" + _interactionQuestion + ", _healthTipQuestion="
-				+ _healthTipQuestion + "]";
+				+ ", actionIncomplete=" + actionIncomplete + ", parameters=" + parameters + ", contexts=" + contexts
+				+ ", metadata=" + metadata + ", fulfillment=" + fulfillment + ", score=" + score
+				+ ", _interactionAvailable=" + _interactionAvailable + ", _healthTipsAvailable=" + _healthTipsAvailable
+				+ ", _interactionQuestion=" + _interactionQuestion + ", _healthTipQuestion=" + _healthTipQuestion + "]";
 	}
+
 
 
 }

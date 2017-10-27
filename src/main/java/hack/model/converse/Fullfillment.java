@@ -1,28 +1,27 @@
 package hack.model.converse;
 
-import java.util.Arrays;
+import java.util.List;
 
 public class Fullfillment {
 	private String speech;
-	private Message[] messages;
+	private List<Message> messages;
 	public String getSpeech() {
 		return speech;
 	}
 	public void setSpeech(String speech) {
 		this.speech = speech;
 	}
-	public Message[] getMessages() {
+	public List<Message> getMessages() {
 		return messages;
 	}
-	public void setMessages(Message[] messages) {
+	public void setMessages(List<Message> messages) {
 		this.messages = messages;
 	}
 	@Override
 	public String toString() {
-		return "Fullfillment [speech=" + speech + ", messages=" + Arrays.toString(messages) + ", getSpeech()="
-				+ getSpeech() + ", getMessages()=" + Arrays.toString(getMessages()) + ", getClass()=" + getClass()
-				+ ", hashCode()=" + hashCode() + ", toString()=" + super.toString() + "]";
+		return "Fullfillment [speech=" + speech + ", messages=" + messages + "]";
 	}
+
 	
 
 }

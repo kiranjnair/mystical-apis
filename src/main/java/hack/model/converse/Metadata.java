@@ -6,9 +6,6 @@ public class Metadata {
 	public String intentName;
 	public String webhookUsed;
 	public String webhookForSlotFillingUsed;
-	//public String[] inputContexts;
-	//public String[] outputContexts;	
-	//public String[] contexts;
 	
 	public String getIntentId() {
 		return intentId;
