@@ -51,7 +51,7 @@ public class ConversationController {
     jacksonObjectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
   }
 
-  @RequestMapping(method = RequestMethod.POST, value = "/v1/d3/sendtoapi",
+  @RequestMapping(method = RequestMethod.POST, value = "/v1/d3/sendtoapi-old",
       produces = MediaType.APPLICATION_JSON_VALUE)
   public @ResponseBody ResponseModel converse(@RequestBody RequestModel reqModel)
       throws AppException, JsonProcessingException {
@@ -70,9 +70,7 @@ public class ConversationController {
       throw new AppException("Conversation Reply null! ");
     }
     ResponseModel resModel = reply.getResponseModel();
-    // resModel = createDummyYesResModel();
-    // resModel = createDummyNoResModel();
-    if (resModel != null) {
+   if (resModel != null) {
       if (resModel.getResult() != null) {
         resModel = apiRouting(reqModel, resModel);
       }
@@ -161,7 +159,7 @@ public class ConversationController {
         if (altQuery != null) {
           RequestModel newRequestModel = new RequestModel();
           BeanUtils.copyProperties(reqModel, newRequestModel);
-          newRequestModel.setQuery(altQuery);
+          newRequestModel.setQ(altQuery);
           logger.info("Rerouting request with alternate query {}", newRequestModel);
           resModel = converse(newRequestModel);
         }

@@ -37,7 +37,7 @@ public class ConversationRequest implements IntgRequest {
 		Map <String, Object> body = new HashMap<String, Object>();
 		ObjectMapper mapper = new ObjectMapper();
 		
-		body.put("query", getrModel().getQuery());
+		body.put("query", getrModel().getQ());
 		body.put("lang", getrModel().getLang());
 		body.put("sessionId", getrModel().getSessionId());
 		body.put("timezone", getrModel().getTimezone());
