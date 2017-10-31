@@ -10,6 +10,9 @@ import hack.model.converse.ContextParameters;
 public interface ContextParamsRepository extends MongoRepository<ContextParameters, String> {
 
 	List<ContextParameters> findByMedicine(String name);
+	List<ContextParameters> findByUserid(String userid);
+
+  
 
 }
 																									

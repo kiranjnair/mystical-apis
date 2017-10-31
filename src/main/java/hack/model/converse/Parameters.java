@@ -6,6 +6,7 @@ public class Parameters {
 	private String recurrence;
 	private String time;
 	private String conversetype;
+	private String choicetype;
   public String getDate() {
     return date;
   }
@@ -35,6 +36,13 @@ public class Parameters {
   }
   public void setConversetype(String conversetype) {
     this.conversetype = conversetype;
+  }
+  
+  public String getChoicetype() {
+    return choicetype;
+  }
+  public void setChoicetype(String choicetype) {
+    this.choicetype = choicetype;
   }
   @Override
   public String toString() {

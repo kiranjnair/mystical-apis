@@ -2,6 +2,7 @@ package hack.model.converse;
 
 public class ContextParameters {
 
+    private String userid;
 	private String recurrence;
 	private String date;
 	private String time_original;
@@ -66,14 +67,19 @@ public class ContextParameters {
 	public void setMyaction(String myaction) {
 		this.myaction = myaction;
 	}
-	@Override
-	public String toString() {
-		return "ContextParameters [recurrence=" + recurrence + ", date=" + date + ", time_original=" + time_original
-				+ ", date_original=" + date_original + ", medicine_original=" + medicine_original + ", medicine="
-				+ medicine + ", time=" + time + ", recurrence_original=" + recurrence_original + ", myaction="
-				+ myaction + "]";
-	}
 	
-	
-	
+	public String getUserid() {
+    return userid;
+  }
+  public void setUserid(String userid) {
+    this.userid = userid;
+  }
+  @Override
+  public String toString() {
+    return "ContextParameters [userid=" + userid + ", recurrence=" + recurrence + ", date=" + date
+        + ", time_original=" + time_original + ", date_original=" + date_original
+        + ", medicine_original=" + medicine_original + ", medicine=" + medicine + ", time=" + time
+        + ", recurrence_original=" + recurrence_original + ", myaction=" + myaction + "]";
+  }
+ 
 }
