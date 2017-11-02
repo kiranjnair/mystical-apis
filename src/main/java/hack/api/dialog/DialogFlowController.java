@@ -53,7 +53,7 @@ public class DialogFlowController {
     String converseType = (StringUtils.isEmpty(requestModel.getConverseType())) ? "converse"
         : requestModel.getConverseType();
     if (ConverseTypeEnum.valueOf(converseType) == ConverseTypeEnum.converse) {
-      responseModel = dialogManager.routeConverseAPI(requestModel);
+      responseModel = dialogManager.routeConverseAPI(requestModel,null,false);
     }
     responseModel = apiRouting(requestModel, responseModel);
 
@@ -66,29 +66,18 @@ public class DialogFlowController {
       throws AppException, JsonProcessingException {
 
     String conversetype = null;
-    Result result = null;
     boolean hasContext = false;
+  /*  if (resModel != null && resModel.getResult() != null) {
+    	resModel = dialogManager.handleResponse(reqModel,resModel);
+    	
+    }*/
     
-    // Handle Context responses
-    if (resModel != null && resModel.getResult() != null
-        && resModel.getResult().getContexts() != null
-        && resModel.getResult().getContexts().size() > 0) {
-      resModel = dialogManager.handleContext(reqModel, resModel);
-      return resModel;
-    } 
-    //Get converse type from Converse Intent
-    if (resModel != null && resModel.getResult() != null
-        && resModel.getResult().getParameters() != null
-        && resModel.getResult().getAction().equals("Converse.Get")) {
-      result = resModel.getResult();
-      conversetype = result.getParameters().getConversetype();
-      hasContext = false;
-    }
+  
   //Get converse type from Specific context sent back from UI
-    else {
+   // else {
       conversetype = reqModel.getConverseType();
       hasContext = true;
-    }
+    //}
     //Set to default converseType if not available
     conversetype = (StringUtils.isEmpty(conversetype)) ? "converse" : conversetype;
 

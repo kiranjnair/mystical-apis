@@ -1,7 +1,9 @@
 package hack.dialog.model;
 
-public class RequestModel {
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+public class RequestModel {
+	 @JsonProperty("q")
   private String query;
   private String lang;
   private String sessionId;
