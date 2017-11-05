@@ -169,13 +169,7 @@ public class ConversationController {
     if (result.getAction().equalsIgnoreCase("reminder.cancel")) {
       if (cParameters.getMyaction() != null
           && cParameters.getMyaction().equalsIgnoreCase("reminder.set")) {
-        result.set_healthTipsAvailable(true);
-        result.set_interactionAvailable(true);
-        result.set_interactionQuestion(
-            "Hmm..It seems there is some interaction amoung your current medications. Would you like to know more about it?");
-        result.set_healthTipQuestion(
-            "Are you interested in getting some tips on your health conditions?");
-
+  
       }
     }
 

@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import hack.dal.ContextParamsRepository;
 import hack.dal.DrugRepository;
 import hack.dal.UserHealthTipsRepository;
@@ -60,7 +62,31 @@ public class DialogFlowManager {
 
 	private static Logger logger = LoggerFactory.getLogger(DialogFlowManager.class);
 
-	public ResponseModel handleResponse(RequestModel reqModel, ResponseModel resModel) {
+	public ResponseModel apiRouting(RequestModel reqModel, ResponseModel resModel, boolean hasContext)
+			throws AppException, JsonProcessingException {
+
+		String conversetype = reqModel.getConverseType();
+		logger.info("Routing API call to {}", conversetype);
+		if (ConverseTypeEnum.valueOf(conversetype) == ConverseTypeEnum.converse) {
+			resModel = routeConverseAPI(reqModel, resModel, hasContext);
+		}
+
+		if (ConverseTypeEnum.valueOf(conversetype) == ConverseTypeEnum.schedule) {
+			resModel = routeScheduleAPI(reqModel, resModel, hasContext);
+		}
+		if (ConverseTypeEnum.valueOf(conversetype) == ConverseTypeEnum.interaction) {
+			resModel = routeInteractionAPI(reqModel, resModel, hasContext);
+		}
+		if (ConverseTypeEnum.valueOf(conversetype) == ConverseTypeEnum.healthtips) {
+			resModel = routeHealthTipsAPI(reqModel, resModel, hasContext);
+		}
+
+		return resModel;
+
+	}
+
+	public ResponseModel handleResponse(RequestModel reqModel, ResponseModel resModel)
+			throws AppException, JsonProcessingException {
 		logger.debug("Inside handleResponse {}{}", reqModel, resModel);
 
 		if (resModel != null && resModel.getResult() != null) {
@@ -69,22 +95,18 @@ public class DialogFlowManager {
 			// Get converse type from Converse Intent
 			if (resModel.getResult().getParameters() != null
 					&& resModel.getResult().getAction().equals("Converse.Get")) {
-				resModel = routeScheduleAPI(reqModel, resModel, false);
+				String converseType = resModel.getResult().getParameters().getConversetype();
+				reqModel.setConverseType(converseType);
+				resModel = apiRouting(reqModel, resModel, false);
 			}
-			else if (result.getAction().equalsIgnoreCase("reminder.cancel")) {
-				if (result.getParameters().getConversetype().equalsIgnoreCase("schedule")) {
-					resModel.getResult().getParameters().setConversetype(ConverseTypeEnum.healthtips.name());
-					resModel.getResult().getFulfillment().setSpeech(resModel.getResult().getFulfillment().getSpeech()
-							+ "By the way, I can help you with some tips to improve your health.Would you be interested?");
-				}
-			}
+
 			else if (result.getAction().equalsIgnoreCase("Interaction.Get")) {
 				if (result.getParameters() != null || StringUtils.isEmpty(result.getParameters().getChoicetype())) {
 					if (result.getParameters().getChoicetype().equalsIgnoreCase("Yes")) {
 						logger.debug("Inside Interaction Choice Yes");
-						UserInteraction userInteraction = userInteractionRepository.findOne(userid);
-						String interactionSpeech = getInteractionSpeech(userInteraction);
-						logger.info("Interactin data {}",interactionSpeech);
+						List<UserInteraction> userInteractions = userInteractionRepository.findByUserid(userid);
+						String interactionSpeech = getInteractionSpeech(userInteractions.get(0));
+						logger.info("Interactin data {}", interactionSpeech);
 						resModel.getResult().getFulfillment().setSpeech(interactionSpeech);
 
 					} else if (result.getParameters().getChoicetype().equalsIgnoreCase("No")) {
@@ -97,12 +119,12 @@ public class DialogFlowManager {
 			}
 
 			else if (result.getAction().equalsIgnoreCase("Healthtips.Get")) {
-				String tipsSpeech = "adios";
+				String tipsSpeech = "";
 				if (resModel.getResult().getParameters().getChoicetype().equals("yes")) {
 					List<UserHealthTips> userHealthTipList = userHealthTipsRepository.findByUserid(userid);
 					if (userHealthTipList != null && userHealthTipList.size() > 0) {
 						List<String> userHealthTips = userHealthTipList.get(0).getHealthTips();
-						removeDuplicates(userHealthTips);
+						removeDuplicates(userHealthTips, false);
 						tipsSpeech = String.join(".", userHealthTips);
 
 					} else {
@@ -110,10 +132,12 @@ public class DialogFlowManager {
 
 					}
 				}
-				UserInteraction userInteraction = userInteractionRepository.findOne(userid);
-				if (userInteraction != null) {
+				List<UserInteraction> userInteractions = userInteractionRepository.findByUserid(userid);
+				if (userInteractions != null && userInteractions.size() > 0) {
 					tipsSpeech += "Hold on! It appears there are some interactions among your medications.Please consult your doctor on this.Would you like to hear more about it?";
+					resModel.getResult().getParameters().setConversetype(ConverseTypeEnum.interaction.name());
 				}
+
 				resModel.getResult().getFulfillment().setSpeech(tipsSpeech);
 
 			}
@@ -132,6 +156,14 @@ public class DialogFlowManager {
 		logger.debug("Inside handleContext {}{}", reqModel, resModel);
 		Result result = resModel.getResult();
 		ContextParameters cParameters = result.getContexts().get(0).getParameters();
+
+		if (result.getAction().equalsIgnoreCase("reminder.cancel")) {
+			if (cParameters.getMyaction() != null && cParameters.getMyaction().equalsIgnoreCase("reminder.set")) {
+				resModel.getResult().getParameters().setConversetype(ConverseTypeEnum.healthtips.name());
+				resModel.getResult().getFulfillment().setSpeech(resModel.getResult().getFulfillment().getSpeech()
+						+ "By the way, I can help you with some tips to improve your health.Would you be interested?");
+			}
+		}
 
 		// Save scheduled Drug
 		if (result.getAction().equalsIgnoreCase("reminder.confirm")) {
@@ -158,7 +190,6 @@ public class DialogFlowManager {
 			}
 		}
 
-
 		return resModel;
 	}
 
@@ -173,7 +204,14 @@ public class DialogFlowManager {
 						if (fitGroup.getSourceName().equalsIgnoreCase("DrugBank")) {
 							List<FullInteractionType> fitList = fitGroup.getFullInteractionType();
 							if (fitList != null && fitList.size() > 0) {
-								builder.append("I found ").append(fitList.size()).append(" interactions.");
+								builder.append("I found ").append(fitList.size());
+								if (fitList.size() > 1) {
+									builder.append(" interactions.");
+
+								} else {
+									builder.append(" interaction.");
+								}
+
 								builder.append(
 										"This is for informational purpose only.You should consult with your doctor for any decisions regarding your medications.");
 
@@ -186,13 +224,13 @@ public class DialogFlowManager {
 											String drug1 = iConcepts.get(0).getMinConceptItem().getName();
 											String drug2 = iConcepts.get(1).getMinConceptItem().getName();
 											String severity = (iPair.getSeverity().equalsIgnoreCase("N/A"))
-													? "Not available"
+													? "not available"
 													: iPair.getSeverity();
 											String description = iPair.getDescription();
-											builder.append("Found an interaction between ").append(drug1).append("and ")
-													.append(drug2);
+											builder.append("Found an interaction between ").append(drug1)
+													.append(" and ").append(drug2);
 											builder.append(". Severity is ").append(severity);
-											builder.append(". listen to the details. ").append(description);
+											builder.append(". Here are the details. ").append(description);
 										}
 
 									}
@@ -222,14 +260,14 @@ public class DialogFlowManager {
 		List<String> healthTips = new ArrayList<String>();
 		List<Drug> drugList = new ArrayList<Drug>();
 		List<String> rxNormIds = new ArrayList<String>();
-		UserInteraction userInteraction;
+		UserInteraction userInteraction = null;
 		List<ContextParameters> cParams = contextParamsRepository.findByUserid(userid);
 		if (cParams != null && cParams.size() > 0) {
 			for (ContextParameters param : cParams) {
 				userMeds.add(param.getMedicine());
 				logger.info("From saved medlist for bob: {}", param.getMedicine());
 			}
-			removeDuplicates(userMeds);
+			removeDuplicates(userMeds, true);
 			for (String userMed : userMeds) {
 				logger.info("Getting med from drugsdb {}", userMed);
 				drugList.addAll(drugRepository.findBydrugname(userMed));
@@ -253,10 +291,14 @@ public class DialogFlowManager {
 				InteractionReply reply = (InteractionReply) iService.invoke(irequest);
 				if (reply != null) {
 					InteractionData iData = reply.getInteractionData();
-					if (iData != null && iData.getFullInteractionTypeGroup()!=null && iData.getFullInteractionTypeGroup().size()>0 ) {
+					if (iData != null && iData.getFullInteractionTypeGroup() != null
+							&& iData.getFullInteractionTypeGroup().size() > 0) {
 						logger.info("Interaction service has data");
-						userInteraction = userInteractionRepository.findOne(userid);// update if document exists
-						if (userInteraction == null) {
+						List<UserInteraction> userInteractions = userInteractionRepository.findByUserid(userid);// update
+																												// if
+																												// document
+																												// exists
+						if (userInteractions == null || userInteractions.size() == 0) {
 							userInteraction = new UserInteraction();
 						}
 						userInteraction.setUserid(userid);
@@ -273,15 +315,17 @@ public class DialogFlowManager {
 		}
 	}
 
-	private void removeDuplicates(List<String> inList) {
+	private void removeDuplicates(List<String> inList, boolean toCaps) {
 		// add elements to al, including duplicates
 		Set<String> hs = new HashSet<>();
 		hs.addAll(inList);
 		inList.clear();
 		inList.addAll(hs);
-		ListIterator<String> iterator = inList.listIterator();
-		while (iterator.hasNext()) {
-			iterator.set(iterator.next().toUpperCase());
+		if (toCaps) {
+			ListIterator<String> iterator = inList.listIterator();
+			while (iterator.hasNext()) {
+				iterator.set(iterator.next().toUpperCase());
+			}
 		}
 
 	}
@@ -296,8 +340,9 @@ public class DialogFlowManager {
 			request.setRequestModel(reqModel);
 			DialogFlowReply reply = (DialogFlowReply) dfService.invoke(request);
 			resModel = reply.getResponseModel();
-
+			resModel.getResult().getParameters().setConversetype(ConverseTypeEnum.healthtips.name());
 			resModel = handleResponse(reqModel, resModel);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new AppException("Conversation Reply null! " + e.getMessage());
@@ -319,6 +364,7 @@ public class DialogFlowManager {
 			resModel = reply.getResponseModel();
 			resModel.getResult().getParameters().setConversetype(ConverseTypeEnum.interaction.name());
 			resModel = handleResponse(reqModel, resModel);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new AppException("Conversation Reply null! " + e.getMessage());
@@ -339,6 +385,7 @@ public class DialogFlowManager {
 			resModel = reply.getResponseModel();
 			resModel.getResult().getParameters().setConversetype(ConverseTypeEnum.schedule.name());
 			resModel = handleResponse(reqModel, resModel);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new AppException("Conversation Reply null! " + e.getMessage());

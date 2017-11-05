@@ -16,7 +16,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import hack.dialog.common.ConverseTypeEnum;
 import hack.dialog.model.RequestModel;
 import hack.dialog.model.ResponseModel;
 import hack.exception.AppException;
@@ -46,36 +45,12 @@ public class DialogFlowController {
 		ResponseModel responseModel = null;
 		String converseType = (StringUtils.isEmpty(requestModel.getConverseType())) ? "converse"
 				: requestModel.getConverseType();
-		if (ConverseTypeEnum.valueOf(converseType) == ConverseTypeEnum.converse) {
-			responseModel = dialogManager.routeConverseAPI(requestModel, null, false);
-		}
-		responseModel = apiRouting(requestModel, responseModel);
+		requestModel.setConverseType(converseType);
+		boolean hasContext =(converseType.equalsIgnoreCase("converse"))?false:true;
+		responseModel = dialogManager.apiRouting(requestModel, responseModel,hasContext);
+		logger.info("Speech from API => {}",responseModel.getResult().getFulfillment().getSpeech());
 
 		return responseModel;
-
-	}
-
-	private ResponseModel apiRouting(RequestModel reqModel, ResponseModel resModel)
-			throws AppException, JsonProcessingException {
-
-		String conversetype = null;
-		boolean hasContext = true;
-
-		// Set to default converseType if not available
-		conversetype = (StringUtils.isEmpty(reqModel.getConverseType())) ? "converse" : reqModel.getConverseType();
-		logger.info("Routing API call to {}",conversetype);
-
-		if (ConverseTypeEnum.valueOf(conversetype) == ConverseTypeEnum.schedule) {
-			resModel = dialogManager.routeScheduleAPI(reqModel, resModel, hasContext);
-		}
-		if (ConverseTypeEnum.valueOf(conversetype) == ConverseTypeEnum.interaction) {
-			resModel = dialogManager.routeInteractionAPI(reqModel, resModel, hasContext);
-		}
-		if (ConverseTypeEnum.valueOf(conversetype) == ConverseTypeEnum.healthtips) {
-			resModel = dialogManager.routeHealthTipsAPI(reqModel, resModel, hasContext);
-		}
-
-		return resModel;
 
 	}
 

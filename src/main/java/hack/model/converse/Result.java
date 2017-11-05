@@ -12,10 +12,6 @@ public class Result {
 	private Metadata metadata;	
 	private Fullfillment fulfillment;
 	private String score;
-	private boolean _interactionAvailable;
-	private boolean _healthTipsAvailable;
-	private String _interactionQuestion; 
-	private String _healthTipQuestion;
 	
 	public String getSource() {
 		return source;
@@ -73,39 +69,11 @@ public class Result {
 	public void setContexts(List<Context> contexts) {
 		this.contexts = contexts;
 	}
-	public boolean is_interactionAvailable() {
-		return _interactionAvailable;
-	}
-	public void set_interactionAvailable(boolean _interactionAvailable) {
-		this._interactionAvailable = _interactionAvailable;
-	}
-	public boolean is_healthTipsAvailable() {
-		return _healthTipsAvailable;
-	}
-	public void set_healthTipsAvailable(boolean _healthTipsAvailable) {
-		this._healthTipsAvailable = _healthTipsAvailable;
-	}
-	public String get_interactionQuestion() {
-		return _interactionQuestion;
-	}
-	public void set_interactionQuestion(String _interactionQuestion) {
-		this._interactionQuestion = _interactionQuestion;
-	}
-	public String get_healthTipQuestion() {
-		return _healthTipQuestion;
-	}
-	public void set_healthTipQuestion(String _healthTipQuestion) {
-		this._healthTipQuestion = _healthTipQuestion;
-	}
 	@Override
 	public String toString() {
 		return "Result [source=" + source + ", resolvedQuery=" + resolvedQuery + ", action=" + action
 				+ ", actionIncomplete=" + actionIncomplete + ", parameters=" + parameters + ", contexts=" + contexts
-				+ ", metadata=" + metadata + ", fulfillment=" + fulfillment + ", score=" + score
-				+ ", _interactionAvailable=" + _interactionAvailable + ", _healthTipsAvailable=" + _healthTipsAvailable
-				+ ", _interactionQuestion=" + _interactionQuestion + ", _healthTipQuestion=" + _healthTipQuestion + "]";
+				+ ", metadata=" + metadata + ", fulfillment=" + fulfillment + ", score=" + score + "]";
 	}
-
-
 
 }

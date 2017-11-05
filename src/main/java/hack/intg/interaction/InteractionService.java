@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import hack.exception.AppException;
+import hack.interaction.model.InteractionData;
+import hack.interaction.model.UserInteraction;
 import hack.intg.IntgReply;
 import hack.intg.IntgRequest;
 import hack.intg.IntgService;
@@ -27,11 +29,12 @@ public class InteractionService implements IntgService{
 		URI uri = URI.create(url);
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
-		ResponseEntity<String> response
-		  = restTemplate.getForEntity(uri, String.class);
-		logger.info("Response {} "+response.getBody());
+		ResponseEntity<InteractionData> response
+		  = restTemplate.getForEntity(uri, InteractionData.class);
+		logger.info("InteractionService Response {} "+response.getBody());
 		InteractionReply reply = new InteractionReply();
-		reply.setRawJson(response.getBody());
+		//reply.setRawJson(response.getBody());
+		reply.setInteractionData(response.getBody());
 		return reply;
 	
 	}
