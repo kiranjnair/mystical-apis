@@ -12,7 +12,6 @@ import org.springframework.web.client.RestTemplate;
 
 import hack.exception.AppException;
 import hack.interaction.model.InteractionData;
-import hack.interaction.model.UserInteraction;
 import hack.intg.IntgReply;
 import hack.intg.IntgRequest;
 import hack.intg.IntgService;

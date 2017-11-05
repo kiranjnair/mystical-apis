@@ -1,15 +1,14 @@
 package hack.api.dialog;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -21,15 +20,17 @@ import hack.dal.UserHealthTipsRepository;
 import hack.dal.UserInteractionRepository;
 import hack.dialog.common.ConverseTypeEnum;
 import hack.dialog.common.DialogFlowConstants;
+import hack.dialog.common.DialogFlowUtil;
 import hack.dialog.model.RequestModel;
 import hack.dialog.model.ResponseModel;
+import hack.dialog.model.UserHealthTips;
+import hack.dialog.model.UserInteraction;
 import hack.exception.AppException;
 import hack.interaction.model.FullInteractionType;
 import hack.interaction.model.FullInteractionTypeGroup;
 import hack.interaction.model.InteractionConcept;
 import hack.interaction.model.InteractionData;
 import hack.interaction.model.InteractionPair;
-import hack.interaction.model.UserInteraction;
 import hack.intg.dialog.DialogFlowReply;
 import hack.intg.dialog.DialogFlowRequest;
 import hack.intg.dialog.DialogFlowService;
@@ -105,10 +106,12 @@ public class DialogFlowManager {
 					if (result.getParameters().getChoicetype().equalsIgnoreCase("Yes")) {
 						logger.debug("Inside Interaction Choice Yes");
 						List<UserInteraction> userInteractions = userInteractionRepository.findByUserid(userid);
-						String interactionSpeech = getInteractionSpeech(userInteractions.get(0));
-						logger.info("Interactin data {}", interactionSpeech);
-						resModel.getResult().getFulfillment().setSpeech(interactionSpeech);
-
+						if(userInteractions!=null && userInteractions.size()>0) {
+							String interactionSpeech = getInteractionSpeech(userInteractions.get(userInteractions.size()-1));
+							logger.info("Interactin data {}", interactionSpeech);
+							resModel.getResult().getFulfillment().setSpeech(interactionSpeech);						
+						}
+	
 					} else if (result.getParameters().getChoicetype().equalsIgnoreCase("No")) {
 						logger.debug("Inside Interaction Choice No");
 						resModel.getResult().getFulfillment().setSpeech("Alright.Enjoy rest of your day!Good Bye");
@@ -123,9 +126,9 @@ public class DialogFlowManager {
 				if (resModel.getResult().getParameters().getChoicetype().equals("yes")) {
 					List<UserHealthTips> userHealthTipList = userHealthTipsRepository.findByUserid(userid);
 					if (userHealthTipList != null && userHealthTipList.size() > 0) {
-						List<String> userHealthTips = userHealthTipList.get(0).getHealthTips();
-						removeDuplicates(userHealthTips, false);
-						tipsSpeech = String.join(".", userHealthTips);
+						List<String> userHealthTips = userHealthTipList.get(userHealthTipList.size()-1).getHealthTips();
+						DialogFlowUtil.removeDuplicates(userHealthTips, false);
+						tipsSpeech = String.join("", userHealthTips);
 
 					} else {
 						tipsSpeech = "No tips available.Please check at a later time";
@@ -221,8 +224,19 @@ public class DialogFlowManager {
 										List<InteractionConcept> iConcepts = iPair.getInteractionConcept();
 										// String drug1,drug2;
 										if (iConcepts != null && iConcepts.size() == 2) {// Expecting in pair
-											String drug1 = iConcepts.get(0).getMinConceptItem().getName();
+											String origDrug1 = fit.getMinConcept().get(0).getName();
+											String drug1 = iConcepts.get(0).getMinConceptItem().getName();											
+											String origDrug2 = fit.getMinConcept().get(1).getName();
 											String drug2 = iConcepts.get(1).getMinConceptItem().getName();
+											if(!origDrug1.equalsIgnoreCase(drug1)) {
+												drug1 = origDrug1+" also known as "+drug1;
+												
+											}
+											if(!origDrug2.equalsIgnoreCase(drug2)) {
+												drug2 = origDrug2+" also known as "+drug2;
+												
+											}
+	
 											String severity = (iPair.getSeverity().equalsIgnoreCase("N/A"))
 													? "not available"
 													: iPair.getSeverity();
@@ -261,13 +275,14 @@ public class DialogFlowManager {
 		List<Drug> drugList = new ArrayList<Drug>();
 		List<String> rxNormIds = new ArrayList<String>();
 		UserInteraction userInteraction = null;
+		String foodInteraction,sideEffects,healthTip1,healthTip2;
 		List<ContextParameters> cParams = contextParamsRepository.findByUserid(userid);
 		if (cParams != null && cParams.size() > 0) {
 			for (ContextParameters param : cParams) {
 				userMeds.add(param.getMedicine());
 				logger.info("From saved medlist for bob: {}", param.getMedicine());
 			}
-			removeDuplicates(userMeds, true);
+			DialogFlowUtil.removeDuplicates(userMeds, true);
 			for (String userMed : userMeds) {
 				logger.info("Getting med from drugsdb {}", userMed);
 				drugList.addAll(drugRepository.findBydrugname(userMed));
@@ -277,11 +292,28 @@ public class DialogFlowManager {
 			Drug drug;
 			while (iterator.hasNext()) {
 				drug = iterator.next();
-				healthTips.add(drug.getHealthtip1());
-				healthTips.add(drug.getHealthtip2());
+				foodInteraction = drug.getFoodinteraction();
+				if(!StringUtils.isEmpty(foodInteraction)) {
+					foodInteraction = DialogFlowUtil.formatPeriod(foodInteraction);
+					healthTips.add("Do not take "+drug.getDrugname()+" along with "+foodInteraction);
+					
+				}
+				sideEffects = drug.getSideeffects();
+				if(!StringUtils.isEmpty(sideEffects)) {
+					sideEffects = DialogFlowUtil.formatPeriod(sideEffects);
+					healthTips.add("Some people may experience following side effects. "+sideEffects);
+					
+				}
+				healthTip1 = drug.getHealthtip1();
+				healthTip1 = DialogFlowUtil.formatPeriod(healthTip1);
+				healthTip2 = drug.getHealthtip2();
+				healthTip2 = DialogFlowUtil.formatPeriod(healthTip2);
+				
+				healthTips.add(healthTip1);
+				healthTips.add(healthTip2);
 				rxNormIds.add(drug.getRxnormId());// getting Id for interaction
 			}
-			UserHealthTips userHealthTips = new UserHealthTips(userid, healthTips);
+			UserHealthTips userHealthTips = new UserHealthTips(userid, healthTips,new Date());
 			userHealthTipsRepository.save(userHealthTips);
 			logger.info("User healthtips saved {}", userHealthTips);
 			String drugIdString = StringUtils.collectionToDelimitedString(rxNormIds, "+");
@@ -294,14 +326,15 @@ public class DialogFlowManager {
 					if (iData != null && iData.getFullInteractionTypeGroup() != null
 							&& iData.getFullInteractionTypeGroup().size() > 0) {
 						logger.info("Interaction service has data");
-						List<UserInteraction> userInteractions = userInteractionRepository.findByUserid(userid);// update
-																												// if
-																												// document
-																												// exists
+						List<UserInteraction> userInteractions = userInteractionRepository.findByUserid(userid);
+																												
+																												
+																												
 						if (userInteractions == null || userInteractions.size() == 0) {
 							userInteraction = new UserInteraction();
 						}
 						userInteraction.setUserid(userid);
+						userInteraction.setCreatedTime(new Date());
 						userInteraction.setInteractionData(iData);
 						userInteractionRepository.save(userInteraction);
 
@@ -315,20 +348,7 @@ public class DialogFlowManager {
 		}
 	}
 
-	private void removeDuplicates(List<String> inList, boolean toCaps) {
-		// add elements to al, including duplicates
-		Set<String> hs = new HashSet<>();
-		hs.addAll(inList);
-		inList.clear();
-		inList.addAll(hs);
-		if (toCaps) {
-			ListIterator<String> iterator = inList.listIterator();
-			while (iterator.hasNext()) {
-				iterator.set(iterator.next().toUpperCase());
-			}
-		}
 
-	}
 
 	public ResponseModel routeHealthTipsAPI(RequestModel reqModel, ResponseModel resModel, boolean hasContext) {
 		logger.debug("Inside routeHealthTipsAPI {}{}", reqModel, resModel);

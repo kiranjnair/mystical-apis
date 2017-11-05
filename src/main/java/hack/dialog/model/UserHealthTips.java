@@ -1,18 +1,21 @@
-package hack.api.dialog;
+package hack.dialog.model;
 
+import java.util.Date;
 import java.util.List;
 
 public class UserHealthTips {
 	String userid;
+	private Date createdTime;
 	List<String> healthTips;
 
 	public UserHealthTips() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public UserHealthTips(String userid, List<String> healthTips) {
+	public UserHealthTips(String userid, List<String> healthTips,Date createdTime) {
 		this.userid=userid;
 		this.healthTips=healthTips;
+		this.createdTime = createdTime;
 	}
 
 	public String getUserid() {
@@ -31,10 +34,18 @@ public class UserHealthTips {
 		this.healthTips = healthTips;
 	}
 
+	public Date getCreatedTime() {
+		return createdTime;
+	}
+
+	public void setCreatedTime(Date createdTime) {
+		this.createdTime = createdTime;
+	}
+
 	@Override
 	public String toString() {
-		return "UserHealthTips [userid=" + userid + ", healthTips=" + healthTips + "]";
+		return "UserHealthTips [userid=" + userid + ", createdTime=" + createdTime + ", healthTips=" + healthTips + "]";
 	}
-	
+
 
 }
