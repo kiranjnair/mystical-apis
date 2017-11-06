@@ -46,13 +46,18 @@ public class DialogFlowController {
 		String converseType = (StringUtils.isEmpty(requestModel.getConverseType())) ? "converse"
 				: requestModel.getConverseType();
 		requestModel.setConverseType(converseType);
-		boolean hasContext =(converseType.equalsIgnoreCase("converse"))?false:true;
-		responseModel = dialogManager.apiRouting(requestModel, responseModel,hasContext);
-		logger.info("Speech from API => {}",responseModel.getResult().getFulfillment().getSpeech());
+		boolean hasContext = (converseType.equalsIgnoreCase("converse")) ? false : true;
+		if(!hasContext) {
+			//Reset all context if type is converse
+			requestModel.setResetContexts("true");			
+		}
+		
+		responseModel = dialogManager.apiRouting(requestModel, responseModel, hasContext);
+		logger.info("Speech from API =>[{}] {}", responseModel.getResult().getParameters().getConversetype(),
+				responseModel.getResult().getFulfillment().getSpeech());
 
 		return responseModel;
 
 	}
-
 
 }

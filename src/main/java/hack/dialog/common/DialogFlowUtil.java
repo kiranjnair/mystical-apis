@@ -9,7 +9,6 @@ public class DialogFlowUtil {
 	//End string with period if needed.
 	public static String formatPeriod(String str) {
 		String newStr;
-		System.out.println("before " + str);
 		if (str != null && !str.endsWith(".")) {
 			StringBuilder sb = new StringBuilder();
 			sb.append(str).append(".");
@@ -17,7 +16,6 @@ public class DialogFlowUtil {
 		} else {
 			newStr = str;
 		}
-		System.out.println("after " + newStr);
 		return newStr;
 	}
 	
