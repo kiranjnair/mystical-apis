@@ -1,18 +1,17 @@
 package hack.dialog.model;
 
 import java.util.Date;
-import java.util.List;
 
 public class UserHealthTips {
 	String userid;
 	private Date createdTime;
-	List<String> healthTips;
+	String healthTips;
 
 	public UserHealthTips() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public UserHealthTips(String userid, List<String> healthTips,Date createdTime) {
+	public UserHealthTips(String userid, String healthTips,Date createdTime) {
 		this.userid=userid;
 		this.healthTips=healthTips;
 		this.createdTime = createdTime;
@@ -26,11 +25,13 @@ public class UserHealthTips {
 		this.userid = userid;
 	}
 
-	public List<String> getHealthTips() {
+	
+
+	public String getHealthTips() {
 		return healthTips;
 	}
 
-	public void setHealthTips(List<String> healthTips) {
+	public void setHealthTips(String healthTips) {
 		this.healthTips = healthTips;
 	}
 
