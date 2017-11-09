@@ -321,23 +321,32 @@ public class DialogFlowManager {
 			}
 			Iterator<Drug> iterator = drugList.iterator();
 			Drug drug;
+			if(drugList!=null && drugList.size()>0) {
+				htBuilder.append("Okay! You have currently scheduled ");
+				String strMed = String.join(",", userMeds	)	;
+				strMed=strMed.replaceAll("(.*),(.*)", "$1 and $2");
+				htBuilder.append(strMed).append(". " );
+				
+			}
 			while (iterator.hasNext()) {
 				drug = iterator.next();
+				htBuilder.append("Reviewing summary for ").append(drug.getDrugname()).append(". ");
 				foodInteraction = drug.getFoodinteraction();
 				if (!StringUtils.isEmpty(foodInteraction)) {
 					foodInteraction = DialogFlowUtil.formatPeriod(foodInteraction);
 					htBuilder.append("There are some possible food interactions for ").append(drug.getDrugname())
 							.append(". ");
-					htBuilder.append("Do not take this along with ").append(foodInteraction).append(". ");
+					htBuilder.append("Do not take this along with ").append(foodInteraction);
 
 				}
 				sideEffects = drug.getSideeffects();
 				if (!StringUtils.isEmpty(sideEffects)) {
 					sideEffects = DialogFlowUtil.formatPeriod(sideEffects);
-					htBuilder.append(
+					/*htBuilder.append(
 							"Some people may experience following side effects while taking " + drug.getDrugname())
-							.append(". ");
-					htBuilder.append(sideEffects);
+							.append(". ");*/
+				htBuilder.append("For ").append(drug.getDrugname()).append(", ");
+				htBuilder.append(sideEffects);
 
 				}
 				healthTip1 = drug.getHealthtip1();
